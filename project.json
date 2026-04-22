@@ -1,0 +1,24 @@
+{
+  "overview": "A shared household meal planning app with an ingredient library, recipe management with photo uploads, a 7-day meal planner grid, and an auto-generated smart shopping cart — all running on the Internet Computer with no login required.",
+  "features": [
+    "Ingredient library with preset and custom categories",
+    "Recipe management with image uploads, step-by-step or free-text instructions, tags, favorites, and search",
+    "7-day meal planner grid (Breakfast/Lunch/Dinner) with week navigation and recipe picker",
+    "Auto-generated shopping cart with smart quantity merging, category grouping, and persistent checklist",
+    "Dark mode default with light mode toggle",
+    "Mobile-first design with bottom tab navigation on iPhone",
+    "Shared household data — no accounts or login required"
+  ],
+  "category": "productivity",
+  "tags": [
+    "meal-planner",
+    "recipes",
+    "shopping-list",
+    "household",
+    "food",
+    "planning",
+    "dark-mode",
+    "mobile-first"
+  ],
+  "last_updated": "2026-04-14T19:27:30.471Z"
+}

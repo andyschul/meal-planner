@@ -1,0 +1,217 @@
+type User = 
+ record {
+   createdAt: int;
+   displayName: text;
+   email: text;
+   householdId: opt text;
+   name: text;
+   principalId: principal;
+   role: Role;
+ };
+type ShoppingCartItem = 
+ record {
+   category: text;
+   checked: bool;
+   householdId: text;
+   ingredientId: text;
+   totalQuantity: float64;
+   unit: text;
+ };
+type ShoppingCart = 
+ record {
+   householdId: text;
+   items: vec ShoppingCartItem;
+   weekStart: text;
+ };
+type Role = 
+ variant {
+   admin;
+   member;
+   pending;
+ };
+type Result_9 = 
+ variant {
+   err: text;
+   ok: vec HouseholdJoinRequest;
+ };
+type Result_8 = 
+ variant {
+   err: text;
+   ok: vec Household;
+ };
+type Result_7 = 
+ variant {
+   err: text;
+   ok: vec User;
+ };
+type Result_6 = 
+ variant {
+   err: text;
+   ok: MealPlan;
+ };
+type Result_5 = 
+ variant {
+   err: text;
+   ok: Household;
+ };
+type Result_4 = 
+ variant {
+   err: text;
+   ok;
+ };
+type Result_3 = 
+ variant {
+   err: text;
+   ok: User;
+ };
+type Result_2 = 
+ variant {
+   err: text;
+   ok: Ingredient;
+ };
+type Result_1 = 
+ variant {
+   err: text;
+   ok: Recipe;
+ };
+type Result = 
+ variant {
+   err: text;
+   ok: text;
+ };
+type RecipeIngredient = 
+ record {
+   ingredientId: text;
+   quantity: float64;
+   unit: text;
+ };
+type Recipe = 
+ record {
+   cookTime: nat;
+   createdAt: int;
+   createdBy: principal;
+   freetext: text;
+   id: text;
+   imageId: opt text;
+   ingredients: vec RecipeIngredient;
+   instructionType: InstructionType;
+   isFavorite: bool;
+   name: text;
+   notes: text;
+   prepTime: nat;
+   servings: nat;
+   steps: vec text;
+   tags: vec text;
+   updatedAt: int;
+ };
+type MealSlot = 
+ record {
+   day: Day;
+   meal: Meal;
+   recipeId: text;
+ };
+type MealPlan = 
+ record {
+   householdId: text;
+   id: text;
+   slots: vec MealSlot;
+   weekStart: text;
+ };
+type Meal = 
+ variant {
+   breakfast;
+   dinner;
+   lunch;
+ };
+type InstructionType = 
+ variant {
+   freetext;
+   steps;
+ };
+type Ingredient = 
+ record {
+   category: text;
+   createdAt: int;
+   defaultUnit: text;
+   id: text;
+   name: text;
+ };
+type HouseholdJoinRequest = 
+ record {
+   createdAt: int;
+   householdId: text;
+   id: text;
+   requesterId: principal;
+   requesterName: text;
+ };
+type Household = 
+ record {
+   createdAt: int;
+   createdBy: principal;
+   id: text;
+   name: text;
+ };
+type Day = 
+ variant {
+   friday;
+   monday;
+   saturday;
+   sunday;
+   thursday;
+   tuesday;
+   wednesday;
+ };
+service : {
+  addCategory: (name: text) -> (Result);
+  approveJoinRequest: (requestId: text) -> (Result_4);
+  approveUser: (userId: principal) -> (Result_3);
+  assignRecipeToSlot: (weekStart: text, day: text, meal: text, recipeId:
+   text) -> (Result_6);
+  clearAllData: () -> (Result_4);
+  clearWeek: (weekStart: text) -> (Result);
+  createHousehold: (name: text) -> (Result_5);
+  createIngredient: (name: text, category: text, defaultUnit: text) ->
+   (Result_2);
+  createRecipe: (name: text, recipeIngredients: vec RecipeIngredient,
+   instructionType: text, steps: vec text, freetext: text, prepTime: 
+   nat, cookTime: nat, servings: nat, tags: vec text, imageId: opt text,
+   notes: text) -> (Result_1);
+  deleteIngredient: (id: text) -> (Result);
+  deleteRecipe: (id: text) -> (Result);
+  denyJoinRequest: (requestId: text) -> (Result_4);
+  denyUser: (userId: principal) -> (Result_4);
+  getAllTags: () -> (vec text) query;
+  getCategories: () -> (vec text) query;
+  getCurrentUser: () -> (Result_3) query;
+  getHouseholdJoinRequests: () -> (Result_9) query;
+  getHouseholdMembers: (householdId: text) -> (Result_7) query;
+  getHouseholds: () -> (Result_8) query;
+  getIngredient: (id: text) -> (opt Ingredient) query;
+  getIngredients: () -> (vec Ingredient) query;
+  getMealPlan: (weekStart: text) -> (opt MealPlan) query;
+  getPendingUsers: () -> (Result_7) query;
+  getRecipe: (id: text) -> (opt Recipe) query;
+  getRecipes: () -> (vec Recipe) query;
+  getShoppingCart: (weekStart: text) -> (ShoppingCart) query;
+  getUsers: () -> (Result_7) query;
+  leaveHousehold: () -> (Result_4);
+  registerOrGetUser: (name: text, email: text) -> (Result_3);
+  removeHouseholdMember: (userId: principal) -> (Result_4);
+  removeRecipeFromSlot: (weekStart: text, day: text, meal: text) ->
+   (Result_6);
+  removeUser: (userId: principal) -> (Result_4);
+  renameHousehold: (householdId: text, newName: text) -> (Result_5);
+  requestJoinHousehold: (householdId: text) -> (Result_4);
+  toggleFavorite: (id: text) -> (Result_1);
+  transferAdminRole: (newAdminId: principal) -> (Result_4);
+  uncheckAllCartItems: (weekStart: text) -> (Result);
+  updateDisplayName: (displayName: text) -> (Result_3);
+  updateIngredient: (id: text, name: text, category: text, defaultUnit:
+   text) -> (Result_2);
+  updateRecipe: (id: text, name: text, recipeIngredients:
+   vec RecipeIngredient, instructionType: text, steps: vec text, freetext:
+   text, prepTime: nat, cookTime: nat, servings: nat, tags: vec text,
+   imageId: opt text, notes: text) -> (Result_1);
+  updateShoppingCartItem: (weekStart: text, ingredientId: text, unit: 
+   text, checked: bool) -> (Result);
+}
