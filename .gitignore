@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Motoko package manager
+.mops/
+
+# Build locks
+**/.backend.buildlock
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo

@@ -197,7 +197,7 @@ export const mockBackend: backendInterface = {
   toggleFavorite: async () => ({ __kind__: "ok", ok: sampleRecipes[0] }),
   transferAdminRole: async () => ({ __kind__: "ok", ok: null }),
   uncheckAllCartItems: async () => ({ __kind__: "ok", ok: "unchecked" }),
-  updateDisplayName: async (displayName) => ({ __kind__: "ok", ok: { ...sampleUser, displayName } }),
+  updateProfile: async (displayName, email) => ({ __kind__: "ok", ok: { ...sampleUser, displayName, email } }),
   updateIngredient: async (id, name, category, defaultUnit) => ({
     __kind__: "ok",
     ok: { id, name, category, defaultUnit, createdAt: BigInt(Date.now()) },

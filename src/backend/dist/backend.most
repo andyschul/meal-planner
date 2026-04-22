@@ -1,9 +1,9 @@
 // Version: 3.0.0
-type Data__791452850<K, V> =
-  {var count : Nat__490723111; kvs : [var ?(K, V)]};
-type Day__780924780 =
+type Data__678143819<K, V> =
+  {var count : Nat__107743821; kvs : [var ?(K, V)]};
+type Day__419565186 =
   {#friday; #monday; #saturday; #sunday; #thursday; #tuesday; #wednesday};
-type HouseholdJoinRequest__147831137 =
+type HouseholdJoinRequest__31261746 =
   {
     createdAt : Int;
     householdId : Text;
@@ -11,9 +11,9 @@ type HouseholdJoinRequest__147831137 =
     requesterId : Principal;
     requesterName : Text
   };
-type Household__108715759 =
+type Household__502277662 =
   {createdAt : Int; createdBy : Principal; id : Text; name : Text};
-type Ingredient__382442840 =
+type Ingredient__338369716 =
   {
     category : Text;
     createdAt : Int;
@@ -21,54 +21,54 @@ type Ingredient__382442840 =
     id : Text;
     name : Text
   };
-type InstructionType__9539303 = {#freetext; #steps};
-type Internal__8484328<K, V> =
-  {children : [var ?Node__46230540<K, V>]; data : Data__791452850<K, V>};
-type Leaf__809889148<K, V> = {data : Data__791452850<K, V>};
-type List__415060402<T> = List__790383201<T>;
-type List__790383201<T> =
+type InstructionType__452574048 = {#freetext; #steps};
+type Internal__272372588<K, V> =
+  {children : [var ?Node__216023231<K, V>]; data : Data__678143819<K, V>};
+type Leaf__366843236<K, V> = {data : Data__678143819<K, V>};
+type List__291137870<T> = List__731530306<T>;
+type List__731530306<T> =
   {
-    var blockIndex : Nat__490723111;
+    var blockIndex : Nat__107743821;
     var blocks : [var [var ?T]];
-    var elementIndex : Nat__490723111
+    var elementIndex : Nat__107743821
   };
-type Map__158565046<K, V> = Map__297112838<K, V>;
-type Map__297112838<K, V> =
-  {var root : Node__46230540<K, V>; var size : Nat__490723111};
-type Map__605269027<K, V> = Map__158565046<K, V>;
-type MealPlan__1022557120 =
+type Map__267009501<K, V> = Map__966517126<K, V>;
+type Map__466055834<K, V> = Map__267009501<K, V>;
+type Map__966517126<K, V> =
+  {var root : Node__216023231<K, V>; var size : Nat__107743821};
+type MealPlan__324238516 =
   {
     householdId : Text;
     id : Text;
-    slots : [MealSlot__135015939];
+    slots : [MealSlot__712572429];
     weekStart : Text
   };
-type MealSlot__135015939 =
-  {day : Day__780924780; meal : Meal__815781886; recipeId : Text};
-type Meal__815781886 = {#breakfast; #dinner; #lunch};
-type Nat__490723111 = Nat__920180692;
+type MealSlot__712572429 =
+  {day : Day__419565186; meal : Meal__176827226; recipeId : Text};
+type Meal__176827226 = {#breakfast; #dinner; #lunch};
+type Nat__107743821 = Nat__920180692;
 type Nat__920180692 = Nat;
-type Node__46230540<K, V> =
-  {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
-type OldDay__399136859 =
+type Node__216023231<K, V> =
+  {#internal : Internal__272372588<K, V>; #leaf : Leaf__366843236<K, V>};
+type OldDay__767910505 =
   {#friday; #monday; #saturday; #sunday; #thursday; #tuesday; #wednesday};
-type OldInstructionType__350220159 = {#freetext; #steps};
-type OldMealPlan__740444747 =
-  {id : Text; slots : [OldMealSlot__588478603]; weekStart : Text};
-type OldMealSlot__588478603 =
-  {day : OldDay__399136859; meal : OldMeal__236376910; recipeId : Text};
-type OldMeal__236376910 = {#breakfast; #dinner; #lunch};
-type OldRecipeIngredient__774129441 =
+type OldInstructionType__743147324 = {#freetext; #steps};
+type OldMealPlan__245676890 =
+  {id : Text; slots : [OldMealSlot__934129525]; weekStart : Text};
+type OldMealSlot__934129525 =
+  {day : OldDay__767910505; meal : OldMeal__752026319; recipeId : Text};
+type OldMeal__752026319 = {#breakfast; #dinner; #lunch};
+type OldRecipeIngredient__686482489 =
   {ingredientId : Text; quantity : Float; unit : Text};
-type OldRecipe__712265811 =
+type OldRecipe__519302956 =
   {
     cookTime : Nat;
     createdAt : Int;
     freetext : Text;
     id : Text;
     imageId : ?Text;
-    ingredients : [OldRecipeIngredient__774129441];
-    instructionType : OldInstructionType__350220159;
+    ingredients : [OldRecipeIngredient__686482489];
+    instructionType : OldInstructionType__743147324;
     isFavorite : Bool;
     name : Text;
     notes : Text;
@@ -78,7 +78,7 @@ type OldRecipe__712265811 =
     tags : [Text];
     updatedAt : Int
   };
-type OldShoppingCartItem__223303000 =
+type OldShoppingCartItem__952165709 =
   {
     category : Text;
     checked : Bool;
@@ -86,11 +86,11 @@ type OldShoppingCartItem__223303000 =
     totalQuantity : Float;
     unit : Text
   };
-type OldShoppingCart__433188936 =
-  {items : [OldShoppingCartItem__223303000]; weekStart : Text};
-type RecipeIngredient__979547729 =
+type OldShoppingCart__951896834 =
+  {items : [OldShoppingCartItem__952165709]; weekStart : Text};
+type RecipeIngredient__863890184 =
   {ingredientId : Text; quantity : Float; unit : Text};
-type Recipe__767283240 =
+type Recipe__63831324 =
   {
     cookTime : Nat;
     createdAt : Int;
@@ -98,8 +98,8 @@ type Recipe__767283240 =
     freetext : Text;
     id : Text;
     imageId : ?Text;
-    ingredients : [RecipeIngredient__979547729];
-    instructionType : InstructionType__9539303;
+    ingredients : [RecipeIngredient__863890184];
+    instructionType : InstructionType__452574048;
     isFavorite : Bool;
     name : Text;
     notes : Text;
@@ -109,8 +109,8 @@ type Recipe__767283240 =
     tags : [Text];
     updatedAt : Int
   };
-type Role__717780527 = {#admin; #member; #pending};
-type ShoppingCartItem__369927106 =
+type Role__222711035 = {#admin; #member; #pending};
+type ShoppingCartItem__1017176262 =
   {
     category : Text;
     checked : Bool;
@@ -119,13 +119,13 @@ type ShoppingCartItem__369927106 =
     totalQuantity : Float;
     unit : Text
   };
-type ShoppingCart__20095261 =
+type ShoppingCart__761013902 =
   {
     householdId : Text;
-    items : [ShoppingCartItem__369927106];
+    items : [ShoppingCartItem__1017176262];
     weekStart : Text
   };
-type User__98118558 =
+type User__564120620 =
   {
     createdAt : Int;
     displayName : Text;
@@ -133,56 +133,56 @@ type User__98118558 =
     householdId : ?Text;
     name : Text;
     principalId : Principal;
-    role : Role__717780527
+    role : Role__222711035
   };
 actor ({
-  in carts : Map__605269027<Text, OldShoppingCart__433188936>;
-  in customCategories : List__415060402<Text>;
-  in ingredients : List__415060402<Ingredient__382442840>;
-  in mealPlans : Map__605269027<Text, OldMealPlan__740444747>;
-  in recipes : List__415060402<OldRecipe__712265811>
+  in carts : Map__466055834<Text, OldShoppingCart__951896834>;
+  in customCategories : List__291137870<Text>;
+  in ingredients : List__291137870<Ingredient__338369716>;
+  in mealPlans : Map__466055834<Text, OldMealPlan__245676890>;
+  in recipes : List__291137870<OldRecipe__519302956>
 }, {
   stable carts :
     {
-      var root : Node__46230540<Text, ShoppingCart__20095261>;
-      var size : Nat__490723111
+      var root : Node__216023231<Text, ShoppingCart__761013902>;
+      var size : Nat__107743821
     };
   stable customCategories :
     {
-      var blockIndex : Nat__490723111;
+      var blockIndex : Nat__107743821;
       var blocks : [var [var ?Text]];
-      var elementIndex : Nat__490723111
+      var elementIndex : Nat__107743821
     };
   stable households :
     {
-      var root : Node__46230540<Text, Household__108715759>;
-      var size : Nat__490723111
+      var root : Node__216023231<Text, Household__502277662>;
+      var size : Nat__107743821
     };
   stable ingredients :
     {
-      var blockIndex : Nat__490723111;
-      var blocks : [var [var ?Ingredient__382442840]];
-      var elementIndex : Nat__490723111
+      var blockIndex : Nat__107743821;
+      var blocks : [var [var ?Ingredient__338369716]];
+      var elementIndex : Nat__107743821
     };
   stable joinRequests :
     {
-      var root : Node__46230540<Text, HouseholdJoinRequest__147831137>;
-      var size : Nat__490723111
+      var root : Node__216023231<Text, HouseholdJoinRequest__31261746>;
+      var size : Nat__107743821
     };
   stable mealPlans :
     {
-      var root : Node__46230540<Text, MealPlan__1022557120>;
-      var size : Nat__490723111
+      var root : Node__216023231<Text, MealPlan__324238516>;
+      var size : Nat__107743821
     };
   stable recipes :
     {
-      var blockIndex : Nat__490723111;
-      var blocks : [var [var ?Recipe__767283240]];
-      var elementIndex : Nat__490723111
+      var blockIndex : Nat__107743821;
+      var blocks : [var [var ?Recipe__63831324]];
+      var elementIndex : Nat__107743821
     };
   stable users :
     {
-      var root : Node__46230540<Principal, User__98118558>;
-      var size : Nat__490723111
+      var root : Node__216023231<Principal, User__564120620>;
+      var size : Nat__107743821
     }
 }) ;

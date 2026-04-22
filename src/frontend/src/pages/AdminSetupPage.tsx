@@ -4,29 +4,46 @@ import { Label } from "@/components/ui/label";
 import { CheckCircle2, Home, User, UtensilsCrossed } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "../hooks/use-auth";
-import { useCreateHousehold, useUpdateDisplayName } from "../hooks/use-backend";
+import { useCreateHousehold, useUpdateProfile } from "../hooks/use-backend";
 
 type Step = "display-name" | "create-household" | "done";
+
+const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
 
 export default function AdminSetupPage() {
   const { refetchUser } = useAuth();
   const [step, setStep] = useState<Step>("display-name");
   const [displayName, setDisplayName] = useState("");
+  const [email, setEmail] = useState("");
   const [householdName, setHouseholdName] = useState("");
   const [error, setError] = useState("");
 
-  const updateDisplayName = useUpdateDisplayName();
+  const updateProfile = useUpdateProfile();
   const createHousehold = useCreateHousehold();
 
-  const handleNameContinue = async (skip = false) => {
+  const trimmedName = displayName.trim();
+  const trimmedEmail = email.trim();
+  const emailInvalid = trimmedEmail !== "" && !isValidEmail(trimmedEmail);
+  const canContinueName = trimmedName !== "" && !emailInvalid;
+
+  const handleNameContinue = async () => {
     setError("");
-    if (!skip && displayName.trim()) {
-      try {
-        await updateDisplayName.mutateAsync(displayName.trim());
-      } catch (e) {
-        setError(e instanceof Error ? e.message : "Failed to save name");
-        return;
-      }
+    if (!trimmedName) {
+      setError("Display name is required");
+      return;
+    }
+    if (emailInvalid) {
+      setError("Please enter a valid email address");
+      return;
+    }
+    try {
+      await updateProfile.mutateAsync({
+        displayName: trimmedName,
+        email: trimmedEmail,
+      });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to save profile");
+      return;
     }
     setStep("create-household");
   };
@@ -47,7 +64,7 @@ export default function AdminSetupPage() {
     }
   };
 
-  const isPending = updateDisplayName.isPending || createHousehold.isPending;
+  const isPending = updateProfile.isPending || createHousehold.isPending;
 
   return (
     <div
@@ -103,7 +120,7 @@ export default function AdminSetupPage() {
                 <h2 className="font-display font-semibold text-lg text-foreground">
                   Set your display name
                 </h2>
-                <p className="text-xs text-muted-foreground">Optional</p>
+                <p className="text-xs text-muted-foreground">Required</p>
               </div>
             </div>
 
@@ -124,6 +141,22 @@ export default function AdminSetupPage() {
               </p>
             </div>
 
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="display-email">Email</Label>
+              <Input
+                id="display-email"
+                type="email"
+                data-ocid="admin_setup.email.input"
+                placeholder="e.g. andrew@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") void handleNameContinue();
+                }}
+              />
+              <p className="text-xs text-muted-foreground">Optional.</p>
+            </div>
+
             {error && (
               <p
                 className="text-sm text-destructive"
@@ -133,27 +166,15 @@ export default function AdminSetupPage() {
               </p>
             )}
 
-            <div className="flex gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                data-ocid="admin_setup.skip_name.button"
-                onClick={() => void handleNameContinue(true)}
-                className="flex-1"
-                disabled={isPending}
-              >
-                Skip
-              </Button>
-              <Button
-                type="button"
-                data-ocid="admin_setup.continue_name.button"
-                onClick={() => void handleNameContinue()}
-                className="flex-1"
-                disabled={isPending}
-              >
-                Continue
-              </Button>
-            </div>
+            <Button
+              type="button"
+              data-ocid="admin_setup.continue_name.button"
+              onClick={() => void handleNameContinue()}
+              className="w-full"
+              disabled={isPending || !canContinueName}
+            >
+              Continue
+            </Button>
           </div>
         )}
 

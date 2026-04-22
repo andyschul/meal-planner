@@ -15756,7 +15756,7 @@ function mergeLoginOptions(loginOptions, otherLoginOptions) {
   };
 }
 const ONE_HOUR_IN_NANOSECONDS = BigInt(36e11);
-const DEFAULT_IDENTITY_PROVIDER = "https://id.ai";
+const DEFAULT_IDENTITY_PROVIDER = "https://identity.internetcomputer.org/";
 const InternetIdentityReactContext = reactExports.createContext(void 0);
 async function createAuthClient(createOptions) {
   const config = await loadConfig();
@@ -36210,7 +36210,7 @@ Service({
   "toggleFavorite": Func([Text$1], [Result_1], []),
   "transferAdminRole": Func([Principal2], [Result_4], []),
   "uncheckAllCartItems": Func([Text$1], [Result], []),
-  "updateDisplayName": Func([Text$1], [Result_3], []),
+  "updateProfile": Func([Text$1, Text$1], [Result_3], []),
   "updateIngredient": Func(
     [Text$1, Text$1, Text$1, Text$1],
     [Result_2],
@@ -36419,7 +36419,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "toggleFavorite": IDL2.Func([IDL2.Text], [Result_12], []),
     "transferAdminRole": IDL2.Func([IDL2.Principal], [Result_42], []),
     "uncheckAllCartItems": IDL2.Func([IDL2.Text], [Result2], []),
-    "updateDisplayName": IDL2.Func([IDL2.Text], [Result_32], []),
+    "updateProfile": IDL2.Func([IDL2.Text, IDL2.Text], [Result_32], []),
     "updateIngredient": IDL2.Func(
       [IDL2.Text, IDL2.Text, IDL2.Text, IDL2.Text],
       [Result_22],
@@ -37007,17 +37007,17 @@ class Backend {
       return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
     }
   }
-  async updateDisplayName(arg0) {
+  async updateProfile(arg0, arg1) {
     if (this.processError) {
       try {
-        const result = await this.actor.updateDisplayName(arg0);
+        const result = await this.actor.updateProfile(arg0, arg1);
         return from_candid_Result_3_n5(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.updateDisplayName(arg0);
+      const result = await this.actor.updateProfile(arg0, arg1);
       return from_candid_Result_3_n5(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -37753,13 +37753,13 @@ function useRemoveHouseholdMember() {
     }
   });
 }
-function useUpdateDisplayName() {
+function useUpdateProfile() {
   const { actor } = useBackendActor();
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (displayName) => {
+    mutationFn: async (vars) => {
       if (!actor) throw new Error("No actor");
-      const res = await actor.updateDisplayName(displayName);
+      const res = await actor.updateProfile(vars.displayName, vars.email);
       if (res.__kind__ === "err") throw new Error(res.err);
       return mapUser(res.ok);
     },
@@ -38457,23 +38457,38 @@ function Label({
     }
   );
 }
+const isValidEmail$1 = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
 function AdminSetupPage() {
   const { refetchUser } = useAuth();
   const [step, setStep] = reactExports.useState("display-name");
   const [displayName, setDisplayName] = reactExports.useState("");
+  const [email, setEmail] = reactExports.useState("");
   const [householdName, setHouseholdName] = reactExports.useState("");
   const [error, setError] = reactExports.useState("");
-  const updateDisplayName = useUpdateDisplayName();
+  const updateProfile = useUpdateProfile();
   const createHousehold = useCreateHousehold();
-  const handleNameContinue = async (skip = false) => {
+  const trimmedName = displayName.trim();
+  const trimmedEmail = email.trim();
+  const emailInvalid = trimmedEmail !== "" && !isValidEmail$1(trimmedEmail);
+  const canContinueName = trimmedName !== "" && !emailInvalid;
+  const handleNameContinue = async () => {
     setError("");
-    if (!skip && displayName.trim()) {
-      try {
-        await updateDisplayName.mutateAsync(displayName.trim());
-      } catch (e) {
-        setError(e instanceof Error ? e.message : "Failed to save name");
-        return;
-      }
+    if (!trimmedName) {
+      setError("Display name is required");
+      return;
+    }
+    if (emailInvalid) {
+      setError("Please enter a valid email address");
+      return;
+    }
+    try {
+      await updateProfile.mutateAsync({
+        displayName: trimmedName,
+        email: trimmedEmail
+      });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to save profile");
+      return;
     }
     setStep("create-household");
   };
@@ -38491,7 +38506,7 @@ function AdminSetupPage() {
       setError(e instanceof Error ? e.message : "Failed to create household");
     }
   };
-  const isPending = updateDisplayName.isPending || createHousehold.isPending;
+  const isPending = updateProfile.isPending || createHousehold.isPending;
   return /* @__PURE__ */ jsxRuntimeExports.jsx(
     "div",
     {
@@ -38523,7 +38538,7 @@ function AdminSetupPage() {
                 /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx(User$1, { className: "size-5 text-primary" }) }),
                 /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
                   /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display font-semibold text-lg text-foreground", children: "Set your display name" }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground", children: "Optional" })
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground", children: "Required" })
                 ] })
               ] }),
               /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-2", children: [
@@ -38543,6 +38558,24 @@ function AdminSetupPage() {
                 ),
                 /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground", children: "This is how other household members will see you." })
               ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-2", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { htmlFor: "display-email", children: "Email" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  Input,
+                  {
+                    id: "display-email",
+                    type: "email",
+                    "data-ocid": "admin_setup.email.input",
+                    placeholder: "e.g. andrew@example.com",
+                    value: email,
+                    onChange: (e) => setEmail(e.target.value),
+                    onKeyDown: (e) => {
+                      if (e.key === "Enter") void handleNameContinue();
+                    }
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground", children: "Optional. Used only for future account recovery." })
+              ] }),
               error && /* @__PURE__ */ jsxRuntimeExports.jsx(
                 "p",
                 {
@@ -38551,31 +38584,17 @@ function AdminSetupPage() {
                   children: error
                 }
               ),
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex gap-2", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  Button,
-                  {
-                    type: "button",
-                    variant: "outline",
-                    "data-ocid": "admin_setup.skip_name.button",
-                    onClick: () => void handleNameContinue(true),
-                    className: "flex-1",
-                    disabled: isPending,
-                    children: "Skip"
-                  }
-                ),
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  Button,
-                  {
-                    type: "button",
-                    "data-ocid": "admin_setup.continue_name.button",
-                    onClick: () => void handleNameContinue(),
-                    className: "flex-1",
-                    disabled: isPending,
-                    children: "Continue"
-                  }
-                )
-              ] })
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                Button,
+                {
+                  type: "button",
+                  "data-ocid": "admin_setup.continue_name.button",
+                  onClick: () => void handleNameContinue(),
+                  className: "w-full",
+                  disabled: isPending || !canContinueName,
+                  children: "Continue"
+                }
+              )
             ]
           }
         ),
@@ -50222,28 +50241,43 @@ function MemberManagementPage({
     }
   );
 }
+const isValidEmail = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
 function MemberSetupPage() {
   const { refetchUser } = useAuth();
   const [step, setStep] = reactExports.useState("display-name");
   const [displayName, setDisplayName] = reactExports.useState("");
+  const [email, setEmail] = reactExports.useState("");
   const [newHouseholdName, setNewHouseholdName] = reactExports.useState("");
   const [showCreateForm, setShowCreateForm] = reactExports.useState(false);
   const [error, setError] = reactExports.useState("");
   const [joinedHousehold, setJoinedHousehold] = reactExports.useState("");
   const { data: households = [] } = useHouseholds();
-  const updateDisplayName = useUpdateDisplayName();
+  const updateProfile = useUpdateProfile();
   const createHousehold = useCreateHousehold();
   const requestJoin = useRequestJoinHousehold();
-  const isPending = updateDisplayName.isPending || createHousehold.isPending || requestJoin.isPending;
-  const handleNameContinue = async (skip = false) => {
+  const isPending = updateProfile.isPending || createHousehold.isPending || requestJoin.isPending;
+  const trimmedName = displayName.trim();
+  const trimmedEmail = email.trim();
+  const emailInvalid = trimmedEmail !== "" && !isValidEmail(trimmedEmail);
+  const canContinueName = trimmedName !== "" && !emailInvalid;
+  const handleNameContinue = async () => {
     setError("");
-    if (!skip && displayName.trim()) {
-      try {
-        await updateDisplayName.mutateAsync(displayName.trim());
-      } catch (e) {
-        setError(e instanceof Error ? e.message : "Failed to save name");
-        return;
-      }
+    if (!trimmedName) {
+      setError("Display name is required");
+      return;
+    }
+    if (emailInvalid) {
+      setError("Please enter a valid email address");
+      return;
+    }
+    try {
+      await updateProfile.mutateAsync({
+        displayName: trimmedName,
+        email: trimmedEmail
+      });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to save profile");
+      return;
     }
     setStep("household");
   };
@@ -50292,7 +50326,7 @@ function MemberSetupPage() {
                 /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx(User$1, { className: "size-5 text-primary" }) }),
                 /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
                   /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display font-semibold text-lg text-foreground", children: "Set your display name" }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground", children: "Optional" })
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground", children: "Required" })
                 ] })
               ] }),
               /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-2", children: [
@@ -50311,6 +50345,24 @@ function MemberSetupPage() {
                   }
                 )
               ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-2", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { htmlFor: "display-email", children: "Email" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  Input,
+                  {
+                    id: "display-email",
+                    type: "email",
+                    "data-ocid": "member_setup.email.input",
+                    placeholder: "e.g. sarah@example.com",
+                    value: email,
+                    onChange: (e) => setEmail(e.target.value),
+                    onKeyDown: (e) => {
+                      if (e.key === "Enter") void handleNameContinue();
+                    }
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground", children: "Optional. Used only for future account recovery." })
+              ] }),
               error && /* @__PURE__ */ jsxRuntimeExports.jsx(
                 "p",
                 {
@@ -50319,31 +50371,17 @@ function MemberSetupPage() {
                   children: error
                 }
               ),
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex gap-2", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  Button,
-                  {
-                    type: "button",
-                    variant: "outline",
-                    "data-ocid": "member_setup.skip_name.button",
-                    onClick: () => void handleNameContinue(true),
-                    className: "flex-1",
-                    disabled: isPending,
-                    children: "Skip"
-                  }
-                ),
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  Button,
-                  {
-                    type: "button",
-                    "data-ocid": "member_setup.continue_name.button",
-                    onClick: () => void handleNameContinue(),
-                    className: "flex-1",
-                    disabled: isPending,
-                    children: "Continue"
-                  }
-                )
-              ] })
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                Button,
+                {
+                  type: "button",
+                  "data-ocid": "member_setup.continue_name.button",
+                  onClick: () => void handleNameContinue(),
+                  className: "w-full",
+                  disabled: isPending || !canContinueName,
+                  children: "Continue"
+                }
+              )
             ]
           }
         ),
@@ -51219,7 +51257,7 @@ function ProfilePage({
 }) {
   const { currentUser, logout } = useAuth();
   const { data: households = [] } = useHouseholds();
-  const updateDisplayName = useUpdateDisplayName();
+  const updateProfile = useUpdateProfile();
   const [editingName, setEditingName] = reactExports.useState(false);
   const [nameInput, setNameInput] = reactExports.useState((currentUser == null ? void 0 : currentUser.displayName) ?? "");
   const [nameSaved, setNameSaved] = reactExports.useState(false);
@@ -51233,13 +51271,16 @@ function ProfilePage({
       setEditingName(false);
       return;
     }
-    updateDisplayName.mutate(trimmed, {
-      onSuccess: () => {
-        setEditingName(false);
-        setNameSaved(true);
-        setTimeout(() => setNameSaved(false), 2e3);
+    updateProfile.mutate(
+      { displayName: trimmed, email: (currentUser == null ? void 0 : currentUser.email) ?? "" },
+      {
+        onSuccess: () => {
+          setEditingName(false);
+          setNameSaved(true);
+          setTimeout(() => setNameSaved(false), 2e3);
+        }
       }
-    });
+    );
   };
   const handleSignOut = () => {
     logout();
@@ -51338,9 +51379,9 @@ function ProfilePage({
                   size: "sm",
                   "data-ocid": "profile.name.save_button",
                   onClick: handleSaveName,
-                  disabled: updateDisplayName.isPending,
+                  disabled: updateProfile.isPending,
                   className: "h-9 px-3 text-xs bg-primary text-primary-foreground hover:bg-primary/90 shrink-0",
-                  children: updateDisplayName.isPending ? "…" : /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "size-3.5" })
+                  children: updateProfile.isPending ? "…" : /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "size-3.5" })
                 }
               ),
               /* @__PURE__ */ jsxRuntimeExports.jsx(

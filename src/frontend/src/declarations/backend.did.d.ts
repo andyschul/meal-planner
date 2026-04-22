@@ -173,7 +173,7 @@ export interface _SERVICE {
   'toggleFavorite' : ActorMethod<[string], Result_1>,
   'transferAdminRole' : ActorMethod<[Principal], Result_4>,
   'uncheckAllCartItems' : ActorMethod<[string], Result>,
-  'updateDisplayName' : ActorMethod<[string], Result_3>,
+  'updateProfile' : ActorMethod<[string, string], Result_3>,
   'updateIngredient' : ActorMethod<[string, string, string, string], Result_2>,
   'updateRecipe' : ActorMethod<
     [

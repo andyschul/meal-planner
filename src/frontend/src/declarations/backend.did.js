@@ -186,7 +186,7 @@ export const idlService = IDL.Service({
   'toggleFavorite' : IDL.Func([IDL.Text], [Result_1], []),
   'transferAdminRole' : IDL.Func([IDL.Principal], [Result_4], []),
   'uncheckAllCartItems' : IDL.Func([IDL.Text], [Result], []),
-  'updateDisplayName' : IDL.Func([IDL.Text], [Result_3], []),
+  'updateProfile' : IDL.Func([IDL.Text, IDL.Text], [Result_3], []),
   'updateIngredient' : IDL.Func(
       [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
       [Result_2],
@@ -399,7 +399,7 @@ export const idlFactory = ({ IDL }) => {
     'toggleFavorite' : IDL.Func([IDL.Text], [Result_1], []),
     'transferAdminRole' : IDL.Func([IDL.Principal], [Result_4], []),
     'uncheckAllCartItems' : IDL.Func([IDL.Text], [Result], []),
-    'updateDisplayName' : IDL.Func([IDL.Text], [Result_3], []),
+    'updateProfile' : IDL.Func([IDL.Text, IDL.Text], [Result_3], []),
     'updateIngredient' : IDL.Func(
         [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
         [Result_2],

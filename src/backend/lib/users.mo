@@ -55,10 +55,11 @@ module {
     #ok(user)
   };
 
-  public func updateDisplayName(
+  public func updateProfile(
     users : Map.Map<Principal, Types.User>,
     principalId : Principal,
     displayName : Text,
+    email : Text,
   ) : { #ok : Types.User; #err : Text } {
     switch (users.get(principalId)) {
       case null { return #err("User not found") };
@@ -67,7 +68,7 @@ module {
           case (#pending) { return #err("Unauthorized") };
           case (_) {};
         };
-        let updated = { user with displayName };
+        let updated = { user with displayName; email };
         users.add(principalId, updated);
         #ok(updated)
       };

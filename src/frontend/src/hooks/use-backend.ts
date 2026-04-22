@@ -377,15 +377,15 @@ export function useRemoveHouseholdMember() {
   });
 }
 
-// ─── Display Name ──────────────────────────────────────────────────────────────
+// ─── Profile ───────────────────────────────────────────────────────────────────
 
-export function useUpdateDisplayName() {
+export function useUpdateProfile() {
   const { actor } = useBackendActor();
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (displayName: string) => {
+    mutationFn: async (vars: { displayName: string; email: string }) => {
       if (!actor) throw new Error("No actor");
-      const res = await actor.updateDisplayName(displayName);
+      const res = await actor.updateProfile(vars.displayName, vars.email);
       if (res.__kind__ === "err") throw new Error(res.err);
       return mapUser(res.ok as Parameters<typeof mapUser>[0]);
     },

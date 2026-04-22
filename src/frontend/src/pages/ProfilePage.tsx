@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "../hooks/use-auth";
-import { useHouseholds, useUpdateDisplayName } from "../hooks/use-backend";
+import { useHouseholds, useUpdateProfile } from "../hooks/use-backend";
 
 interface ProfilePageProps {
   onSignOut: () => void;
@@ -33,7 +33,7 @@ export default function ProfilePage({
 }: ProfilePageProps) {
   const { currentUser, logout } = useAuth();
   const { data: households = [] } = useHouseholds();
-  const updateDisplayName = useUpdateDisplayName();
+  const updateProfile = useUpdateProfile();
 
   const [editingName, setEditingName] = useState(false);
   const [nameInput, setNameInput] = useState(currentUser?.displayName ?? "");
@@ -53,13 +53,16 @@ export default function ProfilePage({
       setEditingName(false);
       return;
     }
-    updateDisplayName.mutate(trimmed, {
-      onSuccess: () => {
-        setEditingName(false);
-        setNameSaved(true);
-        setTimeout(() => setNameSaved(false), 2000);
+    updateProfile.mutate(
+      { displayName: trimmed, email: currentUser?.email ?? "" },
+      {
+        onSuccess: () => {
+          setEditingName(false);
+          setNameSaved(true);
+          setTimeout(() => setNameSaved(false), 2000);
+        },
       },
-    });
+    );
   };
 
   const handleSignOut = () => {
@@ -179,14 +182,10 @@ export default function ProfilePage({
                 size="sm"
                 data-ocid="profile.name.save_button"
                 onClick={handleSaveName}
-                disabled={updateDisplayName.isPending}
+                disabled={updateProfile.isPending}
                 className="h-9 px-3 text-xs bg-primary text-primary-foreground hover:bg-primary/90 shrink-0"
               >
-                {updateDisplayName.isPending ? (
-                  "…"
-                ) : (
-                  <Check className="size-3.5" />
-                )}
+                {updateProfile.isPending ? "…" : <Check className="size-3.5" />}
               </Button>
               <Button
                 size="sm"

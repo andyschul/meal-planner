@@ -214,7 +214,7 @@ export interface backendInterface {
     toggleFavorite(id: string): Promise<Result_1>;
     transferAdminRole(newAdminId: Principal): Promise<Result_4>;
     uncheckAllCartItems(weekStart: string): Promise<Result>;
-    updateDisplayName(displayName: string): Promise<Result_3>;
+    updateProfile(displayName: string, email: string): Promise<Result_3>;
     updateIngredient(id: string, name: string, category: string, defaultUnit: string): Promise<Result_2>;
     updateRecipe(id: string, name: string, recipeIngredients: Array<RecipeIngredient>, instructionType: string, steps: Array<string>, freetext: string, prepTime: bigint, cookTime: bigint, servings: bigint, tags: Array<string>, imageId: string | null, notes: string): Promise<Result_1>;
     updateShoppingCartItem(weekStart: string, ingredientId: string, unit: string, checked: boolean): Promise<Result>;

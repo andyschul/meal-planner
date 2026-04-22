@@ -28,10 +28,11 @@ mixin (
     }
   };
 
-  public shared ({ caller }) func updateDisplayName(
+  public shared ({ caller }) func updateProfile(
     displayName : Text,
+    email : Text,
   ) : async Common.Result<Types.User, Text> {
-    UsersLib.updateDisplayName(users, caller, displayName)
+    UsersLib.updateProfile(users, caller, displayName, email)
   };
 
   public shared query ({ caller }) func getPendingUsers() : async Common.Result<[Types.User], Text> {

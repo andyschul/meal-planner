@@ -62,12 +62,12 @@ type Result_4 =
 type Result_3 = 
  variant {
    err: text;
-   ok: User;
+   ok: Ingredient;
  };
 type Result_2 = 
  variant {
    err: text;
-   ok: Ingredient;
+   ok: User;
  };
 type Result_1 = 
  variant {
@@ -164,14 +164,14 @@ type Day =
 service : {
   addCategory: (name: text) -> (Result);
   approveJoinRequest: (requestId: text) -> (Result_4);
-  approveUser: (userId: principal) -> (Result_3);
+  approveUser: (userId: principal) -> (Result_2);
   assignRecipeToSlot: (weekStart: text, day: text, meal: text, recipeId:
    text) -> (Result_6);
   clearAllData: () -> (Result_4);
   clearWeek: (weekStart: text) -> (Result);
   createHousehold: (name: text) -> (Result_5);
   createIngredient: (name: text, category: text, defaultUnit: text) ->
-   (Result_2);
+   (Result_3);
   createRecipe: (name: text, recipeIngredients: vec RecipeIngredient,
    instructionType: text, steps: vec text, freetext: text, prepTime: 
    nat, cookTime: nat, servings: nat, tags: vec text, imageId: opt text,
@@ -182,7 +182,7 @@ service : {
   denyUser: (userId: principal) -> (Result_4);
   getAllTags: () -> (vec text) query;
   getCategories: () -> (vec text) query;
-  getCurrentUser: () -> (Result_3) query;
+  getCurrentUser: () -> (Result_2) query;
   getHouseholdJoinRequests: () -> (Result_9) query;
   getHouseholdMembers: (householdId: text) -> (Result_7) query;
   getHouseholds: () -> (Result_8) query;
@@ -195,7 +195,7 @@ service : {
   getShoppingCart: (weekStart: text) -> (ShoppingCart) query;
   getUsers: () -> (Result_7) query;
   leaveHousehold: () -> (Result_4);
-  registerOrGetUser: (name: text, email: text) -> (Result_3);
+  registerOrGetUser: (name: text, email: text) -> (Result_2);
   removeHouseholdMember: (userId: principal) -> (Result_4);
   removeRecipeFromSlot: (weekStart: text, day: text, meal: text) ->
    (Result_6);
@@ -205,9 +205,9 @@ service : {
   toggleFavorite: (id: text) -> (Result_1);
   transferAdminRole: (newAdminId: principal) -> (Result_4);
   uncheckAllCartItems: (weekStart: text) -> (Result);
-  updateDisplayName: (displayName: text) -> (Result_3);
   updateIngredient: (id: text, name: text, category: text, defaultUnit:
-   text) -> (Result_2);
+   text) -> (Result_3);
+  updateProfile: (displayName: text, email: text) -> (Result_2);
   updateRecipe: (id: text, name: text, recipeIngredients:
    vec RecipeIngredient, instructionType: text, steps: vec text, freetext:
    text, prepTime: nat, cookTime: nat, servings: nat, tags: vec text,

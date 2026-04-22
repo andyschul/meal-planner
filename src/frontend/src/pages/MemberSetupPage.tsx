@@ -8,40 +8,57 @@ import {
   useCreateHousehold,
   useHouseholds,
   useRequestJoinHousehold,
-  useUpdateDisplayName,
+  useUpdateProfile,
 } from "../hooks/use-backend";
 import type { Household } from "../types";
 
 type Step = "display-name" | "household" | "join-sent" | "done";
 
+const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+
 export default function MemberSetupPage() {
   const { refetchUser } = useAuth();
   const [step, setStep] = useState<Step>("display-name");
   const [displayName, setDisplayName] = useState("");
+  const [email, setEmail] = useState("");
   const [newHouseholdName, setNewHouseholdName] = useState("");
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [error, setError] = useState("");
   const [joinedHousehold, setJoinedHousehold] = useState<string>("");
 
   const { data: households = [] } = useHouseholds();
-  const updateDisplayName = useUpdateDisplayName();
+  const updateProfile = useUpdateProfile();
   const createHousehold = useCreateHousehold();
   const requestJoin = useRequestJoinHousehold();
 
   const isPending =
-    updateDisplayName.isPending ||
+    updateProfile.isPending ||
     createHousehold.isPending ||
     requestJoin.isPending;
 
-  const handleNameContinue = async (skip = false) => {
+  const trimmedName = displayName.trim();
+  const trimmedEmail = email.trim();
+  const emailInvalid = trimmedEmail !== "" && !isValidEmail(trimmedEmail);
+  const canContinueName = trimmedName !== "" && !emailInvalid;
+
+  const handleNameContinue = async () => {
     setError("");
-    if (!skip && displayName.trim()) {
-      try {
-        await updateDisplayName.mutateAsync(displayName.trim());
-      } catch (e) {
-        setError(e instanceof Error ? e.message : "Failed to save name");
-        return;
-      }
+    if (!trimmedName) {
+      setError("Display name is required");
+      return;
+    }
+    if (emailInvalid) {
+      setError("Please enter a valid email address");
+      return;
+    }
+    try {
+      await updateProfile.mutateAsync({
+        displayName: trimmedName,
+        email: trimmedEmail,
+      });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to save profile");
+      return;
     }
     setStep("household");
   };
@@ -105,7 +122,7 @@ export default function MemberSetupPage() {
                 <h2 className="font-display font-semibold text-lg text-foreground">
                   Set your display name
                 </h2>
-                <p className="text-xs text-muted-foreground">Optional</p>
+                <p className="text-xs text-muted-foreground">Required</p>
               </div>
             </div>
 
@@ -123,6 +140,22 @@ export default function MemberSetupPage() {
               />
             </div>
 
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="display-email">Email</Label>
+              <Input
+                id="display-email"
+                type="email"
+                data-ocid="member_setup.email.input"
+                placeholder="e.g. sarah@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") void handleNameContinue();
+                }}
+              />
+              <p className="text-xs text-muted-foreground">Optional.</p>
+            </div>
+
             {error && (
               <p
                 className="text-sm text-destructive"
@@ -132,27 +165,15 @@ export default function MemberSetupPage() {
               </p>
             )}
 
-            <div className="flex gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                data-ocid="member_setup.skip_name.button"
-                onClick={() => void handleNameContinue(true)}
-                className="flex-1"
-                disabled={isPending}
-              >
-                Skip
-              </Button>
-              <Button
-                type="button"
-                data-ocid="member_setup.continue_name.button"
-                onClick={() => void handleNameContinue()}
-                className="flex-1"
-                disabled={isPending}
-              >
-                Continue
-              </Button>
-            </div>
+            <Button
+              type="button"
+              data-ocid="member_setup.continue_name.button"
+              onClick={() => void handleNameContinue()}
+              className="w-full"
+              disabled={isPending || !canContinueName}
+            >
+              Continue
+            </Button>
           </div>
         )}
 
